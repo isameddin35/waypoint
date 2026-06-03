@@ -13,16 +13,20 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private final SecretKey key;
-    private final long expirationMs;
+    private final long accessTokenExpirationMs;
 
     public JwtTokenProvider(
             @Value("${jwt.secret}") String secret,
-            @Value("${jwt.expiration.ms}") long expirationMs) {
+            @Value("${jwt.access-token-expiration-ms}") long accessTokenExpirationMs) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.expirationMs = expirationMs;
+        this.accessTokenExpirationMs = accessTokenExpirationMs;
     }
 
-    public String generateToken(String username, String role, Long userId) {
+    public String generateAccessToken(String username, String role, Long userId) {
+        return generateToken(username, role, userId, accessTokenExpirationMs);
+    }
+
+    public String generateToken(String username, String role, Long userId, long expirationMs) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expirationMs);
 
