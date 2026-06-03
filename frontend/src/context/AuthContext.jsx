@@ -20,6 +20,7 @@ export function AuthProvider({ children }) {
     const res = await authApi.login(credentials);
     const data = res.data;
     localStorage.setItem('token', data.token);
+    localStorage.setItem('refreshToken', data.refreshToken);
     localStorage.setItem('user', JSON.stringify(data));
     setUser(data);
     return data;
@@ -29,6 +30,7 @@ export function AuthProvider({ children }) {
     const res = await authApi.register(data);
     const result = res.data;
     localStorage.setItem('token', result.token);
+    localStorage.setItem('refreshToken', result.refreshToken);
     localStorage.setItem('user', JSON.stringify(result));
     setUser(result);
     return result;
@@ -36,6 +38,7 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
     setUser(null);
   };

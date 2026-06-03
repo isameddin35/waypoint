@@ -3,15 +3,15 @@ services:
     image: postgres:16-alpine
     container_name: waypoint-db
     environment:
-      POSTGRES_DB: waypoint
-      POSTGRES_USER: waypoint
-      POSTGRES_PASSWORD: waypoint
+      POSTGRES_DB: ${POSTGRES_DB:-waypoint}
+      POSTGRES_USER: ${POSTGRES_USER:-waypoint}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-waypoint}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U waypoint"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-waypoint}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,11 +22,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    env_file: .env
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/waypoint
-      SPRING_DATASOURCE_USERNAME: waypoint
-      SPRING_DATASOURCE_PASSWORD: waypoint
-      JWT_SECRET: WaypointSecretKeyForJWTTokenGeneration2024MustBe256BitsLongMin
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-waypoint}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-waypoint}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-waypoint}
+      JWT_SECRET: ${JWT_SECRET:-WaypointSecretKeyForJWTTokenGeneration2024MustBe256BitsLongMin}
     ports:
       - "8080:8080"
     volumes:
